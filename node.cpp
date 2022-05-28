@@ -11,15 +11,20 @@ Node::Node(vector<int> _config, Node*_parent){
 }
 
 vector<Node*> Node::find_children(){
+    cout << "inside find children" << endl;
     vector<int> move = {1, -1, problem_size, -problem_size};
     vector<Node*> resp;
     int idx0 = find_idx0();
     for (auto d : move){
+        cout << d << endl;
         if (inside(idx0, d)){
             vector<int>new_config = config; //(config.begin(), config.end());
-            swap(new_config[idx0], new_config[idx0+d]);
-            //swap(new_config, idx0, idx0+d);
+
+            swap(new_config[idx0], new_config[idx0 + d]);
+
+            cout << "antes ";
             Node *new_node = new Node(new_config, this);
+            cout << "depois ";
             resp.push_back(new_node);
             //for (auto i : new_config) cout << i << ' '; 
             //cout << endl;
@@ -72,7 +77,11 @@ int Node::inside(int i, int d){
 // }
 
 vector<Node*> Node::get_children(){
-    return this->children = find_children();;
+
+    cout << "inside get children" << endl;
+    if (this->children.size() > 0)
+        return this->children;
+    return this->children = find_children();
 }
 
 Node* Node::get_parent(){

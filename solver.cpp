@@ -42,6 +42,7 @@ vector<Node*> Solver::bfs(){
     stack<Node*> st;
     Node *initial_node = new Node(initial_config, NULL);
     st.push(initial_node);
+    visited.insert(*initial_node);
 
     while(!st.empty()){
         cout << "#nodes: "<< nodes_expanded << endl;

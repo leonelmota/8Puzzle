@@ -21,7 +21,7 @@ public:
 private:
     vector<Node*> children;
     Node *parent;
-    //int is_root;
+    int is_root;
     int problem_size = 3;
 
     int find_idx0();
