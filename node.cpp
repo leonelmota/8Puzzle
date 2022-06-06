@@ -7,37 +7,37 @@ using namespace std;
 Node::Node(vector<int> _config, Node*_parent){
     this->config = _config;
     this->parent = _parent;
-    //is_root = _parent == NULL;
+    is_root = _parent == NULL;
+    if (is_root)
+        depth = 0;
+    else
+        depth = this->parent->depth + 1;
 }
 
-vector<Node*> Node::find_children(){
-    cout << "inside find children" << endl;
+vector<Node *> Node::find_children()
+{
     vector<int> move = {1, -1, problem_size, -problem_size};
     vector<Node*> resp;
     int idx0 = find_idx0();
-    for (auto d : move){
-        cout << d << endl;
-        if (inside(idx0, d)){
-            vector<int>new_config = config; //(config.begin(), config.end());
 
+    for (auto d : move)
+    {
+        if (inside(idx0, d)){
+            vector<int> new_config = config;
             swap(new_config[idx0], new_config[idx0 + d]);
 
-            cout << "antes ";
             Node *new_node = new Node(new_config, this);
-            cout << "depois ";
             resp.push_back(new_node);
-            //for (auto i : new_config) cout << i << ' '; 
-            //cout << endl;
         }
     }
     return resp;
 }
 
 bool Node::is_final(){
-    vector<int> config_copy = config;
-    config_copy.erase(find(config_copy.begin(), config_copy.end(), 0));
-    for (int i=1; i<config_copy.size(); i++){
-        if (config_copy[i] != config_copy[i-1]+1) return false;
+    for (int i = 1; i < config.size(); i++)
+    {
+        if (config[i] != 0 and config[i] != i + 1)
+            return false;
     }
     return true;
 }
@@ -47,16 +47,16 @@ int Node::find_idx0(){
     return distance(config.begin(), itr);
 }
 
-vector<Node*> Node::get_parents(){
-    vector<Node*> resp = {this};
-    Node* n = this;
-    cout << "init get resp" << endl;
-    while(n->parent != NULL){
-        n = n->parent;
+vector<Node> Node::get_parents()
+{
+    vector<Node> resp = {*this};
+    Node n = *this;
+    while (n.depth > 0)
+    {
+        n = *(n.parent);
         resp.push_back(n);
     }
     reverse(resp.begin(), resp.end());
-    cout << "resp size" << resp.size() << endl;
     return resp;
 }
 
@@ -70,15 +70,9 @@ int Node::inside(int i, int d){
     return false;
 }
 
-// void Node::swap(vector<int> x, int a, int b){
-//     int temp = x[a];
-//     x[a] = x[b];
-//     x[b] = temp; 
-// }
-
-vector<Node*> Node::get_children(){
-
-    cout << "inside get children" << endl;
+vector<Node *> Node::get_children()
+{
+    //return find_children();
     if (this->children.size() > 0)
         return this->children;
     return this->children = find_children();
@@ -86,4 +80,31 @@ vector<Node*> Node::get_children(){
 
 Node* Node::get_parent(){
     return this->parent;
+}
+
+int Node::heuristic_out_of_place()
+{
+    int count = 0;
+    for (int i = 0; i < config.size(); i++)
+    {
+        if (config[i] != 0 and config[i] != i + 1)
+            count++;
+    }
+    return count;
+}
+
+int Node::heuristic_distance()
+{
+    int count = 0;
+    for (int i = 0; i < config.size(); i++)
+    {
+        //cout << i << ' ' << config[i] << endl;
+        if (config[i] != 0)
+        {
+            count += abs(((config[i] - 1) / problem_size) - i / problem_size);
+            count += abs(((config[i] - 1) % problem_size) - i % problem_size);
+        }
+        //cout << count << endl;
+    }
+    return count;
 }
